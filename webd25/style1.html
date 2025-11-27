@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Court Calendar System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-gavel"></i> Court Calendar</h2>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-item active" id="menu-calendar">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Calendar</span>
+        </div>
+        <div class="menu-item" id="menu-list">
+          <i class="fas fa-list"></i>
+          <span>All Hearings</span>
+        </div>
+        <div class="menu-item" id="menu-judges">
+          <i class="fas fa-user-tie"></i>
+          <span>Judges</span>
+        </div>
+        <div class="menu-item" id="menu-reports">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reports</span>
+        </div>
+        <div class="menu-item" id="menu-settings">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <h1>Court Calendar</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="today-btn">
+            <i class="fas fa-calendar-day"></i> Today
+          </button>
+          <button class="btn btn-outline" id="print-btn">
+            <i class="fas fa-print"></i> Print
+          </button>
+          <button class="btn btn-primary" id="add-hearing">
+            <i class="fas fa-plus"></i> Add Hearing
+          </button>
+        </div>
+      </div>
+      
+      <!-- Stats Cards -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <h3>Total Hearings</h3>
+          <div class="stat-value" id="total-hearings">0</div>
+          <i class="fas fa-gavel stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Upcoming</h3>
+          <div class="stat-value" id="upcoming-hearings">0</div>
+          <i class="fas fa-calendar-check stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Completed</h3>
+          <div class="stat-value" id="completed-hearings">0</div>
+          <i class="fas fa-check-circle stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Rescheduled</h3>
+          <div class="stat-value" id="rescheduled-hearings">0</div>
+          <i class="fas fa-calendar-week stat-icon"></i>
+        </div>
+      </div>
+      
+      <!-- View Toggle -->
+      <div class="view-toggle">
+        <div class="view-option active" data-view="month">
+          <i class="fas fa-calendar-alt"></i> Month
+        </div>
+        <div class="view-option" data-view="week">
+          <i class="fas fa-calendar-week"></i> Week
+        </div>
+        <div class="view-option" data-view="list">
+          <i class="fas fa-list"></i> List
+        </div>
+      </div>
+      
+      <!-- Status Filter -->
+      <div class="status-filter" id="status-filter">
+        <div class="status-option active" data-status="all">All Hearings</div>
+        <div class="status-option" data-status="scheduled">Scheduled</div>
+        <div class="status-option" data-status="completed">Completed</div>
+        <div class="status-option" data-status="rescheduled">Rescheduled</div>
+        <div class="status-option" data-status="cancelled">Cancelled</div>
+      </div>
+      
+      <!-- Calendar View -->
+      <div id="calendar-view">
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <div class="calendar-nav">
+              <button class="btn btn-outline" id="prev-month">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <h2 class="calendar-title" id="current-month">Month Year</h2>
+              <button class="btn btn-outline" id="next-month">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- Calendar days will be generated here -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- List View -->
+      <div class="list-view" id="list-view">
+        <div class="list-header">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Search hearings...">
+          </div>
+          <div class="sort-options">
+            <button class="btn btn-outline" id="sort-date-btn">
+              <i class="fas fa-sort-amount-down"></i> Date
+            </button>
+            <button class="btn btn-outline" id="sort-judge-btn">
+              <i class="fas fa-sort-alpha-down"></i> Judge
+            </button>
+          </div>
+        </div>
+        
+        <div id="all-hearings-list">
+          <!-- Hearings list will be generated here -->
+        </div>
+      </div>
+      
+      <!-- Judges Management -->
+      <div class="judges-container" id="judges-view" style="display: none;">
+        <div class="judges-header">
+          <h2>Judges Management</h2>
+        </div>
+        
+        <div class="add-judge-form">
+          <input type="text" id="new-judge-input" placeholder="Enter judge name" class="form-control">
+          <button class="btn btn-primary" id="add-judge-btn">
+            <i class="fas fa-plus"></i> Add
+          </button>
+        </div>
+        
+        <div class="judge-list" id="judge-list">
+          <!-- Judges list will be generated here -->
+        </div>
+      </div>
+      
+      <!-- Reports View -->
+      <div class="judges-container" id="reports-view" style="display: none;">
+        <div class="judges-header">
+          <h2>Court Reports</h2>
+        </div>
+        
+        <div class="form-group">
+          <label for="report-type">Report Type</label>
+          <select id="report-type" class="form-control">
+            <option value="daily">Daily Schedule</option>
+            <option value="weekly">Weekly Summary</option>
+            <option value="monthly">Monthly Summary</option>
+            <option value="judge">Judge Workload</option>
+          </select>
+        </div>
+        
+        <div class="form-group" id="report-date-container">
+          <label for="report-date">Select Date</label>
+          <input type="date" id="report-date" class="form-control">
+        </div>
+        
+        <div class="form-group" id="report-judge-container" style="display: none;">
+          <label for="report-judge">Select Judge</label>
+          <select id="report-judge" class="form-control">
+            <!-- Judges will be populated here -->
+          </select>
+        </div>
+        
+        <button class="btn btn-primary" id="generate-report">
+          <i class="fas fa-file-pdf"></i> Generate Report
+        </button>
+        
+        <div id="report-preview" style="margin-top: 20px; padding: 20px; background-color: white; border-radius: 8px; display: none;">
+          <h3 id="report-title">Report Preview</h3>
+          <div id="report-content">
+            <!-- Report content will be generated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Hearing Modal -->
+  <div class="modal" id="hearing-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add New Hearing</h3>
+        <button class="close-btn" id="close-modal">&times;</button>
+      </div>
+      
+      <form id="hearing-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="case-title">Case Title</label>
+            <input type="text" id="case-title" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="case-number">Case Number</label>
+            <input type="text" id="case-number" required>
+          </div>
+          
+          <div class="case-type-options">
+            <div class="case-type-option" data-type="criminal">
+              <i class="fas fa-handcuffs"></i>
+              <div>Criminal</div>
+            </div>
+            <div class="case-type-option" data-type="civil">
+              <i class="fas fa-file-contract"></i>
+              <div>Civil</div>
+            </div>
+            <div class="case-type-option" data-type="family">
+              <i class="fas fa-home"></i>
+              <div>Family</div>
+            </div>
+          </div>
+          <input type="hidden" id="case-type">
+          
+          <div class="form-group">
+            <label for="hearing-date">Hearing Date</label>
+            <input type="date" id="hearing-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="hearing-time">Hearing Time</label>
+            <input type="time" id="hearing-time" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="hearing-judge">Judge</label>
+            <select id="hearing-judge" required>
+              <option value="">Select judge</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="hearing-courtroom">Courtroom</label>
+            <input type="text" id="hearing-courtroom" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="hearing-status">Status</label>
+            <select id="hearing-status">
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+              <option value="rescheduled">Rescheduled</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="hearing-notes">Notes</label>
+            <textarea id="hearing-notes"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="delete-btn" style="display: none;">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <button type="button" class="btn btn-outline" id="cancel-btn">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" id="save-btn">
+            <i class="fas fa-save"></i> Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+   <script>
+  class MinHeap {
+    constructor() {
+      this.heap = [];
+    }
+
+    insert(hearing) {
+      this.heap.push(hearing);
+      this._bubbleUp(this.heap.length - 1);
+    }
+
+    extractMin() {
+      if (this.heap.length === 0) return null;
+      if (this.heap.length === 1) return this.heap.pop();
+      const min = this.heap[0];
+      this.heap[0] = this.heap.pop();
+      this._bubbleDown(0);
+      return min;
+    }
+
+    _bubbleUp(i) {
+      while (i > 0) {
+        let parent = Math.floor((i - 1) / 2);
+        if (this.heap[parent].date <= this.heap[i].date) break;
+        [this.heap[parent], this.heap[i]] = [this.heap[i], this.heap[parent]];
+        i = parent;
+      }
+    }
+
+    _bubbleDown(i) {
+      const len = this.heap.length;
+      while (true) {
+        let left = 2 * i + 1;
+        let right = 2 * i + 2;
+        let smallest = i;
+
+        if (left < len && this.heap[left].date < this.heap[smallest].date) smallest = left;
+        if (right < len && this.heap[right].date < this.heap[smallest].date) smallest = right;
+        if (smallest === i) break;
+
+        [this.heap[smallest], this.heap[i]] = [this.heap[i], this.heap[smallest]];
+        i = smallest;
+      }
+    }
+  }
+
+  const hearingHeap = new MinHeap();
+
+
+  const judgeAvailability = new Map();
+
+  function addJudgeAvailability(judge, datetime) {
+    if (!judgeAvailability.has(judge)) {
+      judgeAvailability.set(judge, new Set());
+    }
+    judgeAvailability.get(judge).add(datetime);
+  }
+
+  function isJudgeAvailable(judge, datetime) {
+    return !judgeAvailability.get(judge)?.has(datetime);
+  }
+
+  class TrieNode {
+    constructor() {
+      this.children = {};
+      this.isEnd = false;
+    }
+  }
+
+  class Trie {
+    constructor() {
+      this.root = new TrieNode();
+    }
+
+    insert(word) {
+      let node = this.root;
+      for (let ch of word.toLowerCase()) {
+        if (!node.children[ch]) node.children[ch] = new TrieNode();
+        node = node.children[ch];
+      }
+      node.isEnd = true;
+    }
+
+    search(prefix) {
+      let node = this.root;
+      for (let ch of prefix.toLowerCase()) {
+        if (!node.children[ch]) return false;
+        node = node.children[ch];
+      }
+      return true;
+    }
+  }
+
+  const caseTitleTrie = new Trie();
+
+
+  class Graph {
+    constructor() {
+      this.adjList = new Map();
+    }
+
+    addEdge(caseA, caseB) {
+      if (!this.adjList.has(caseA)) this.adjList.set(caseA, []);
+      if (!this.adjList.has(caseB)) this.adjList.set(caseB, []);
+      this.adjList.get(caseA).push(caseB);
+      this.adjList.get(caseB).push(caseA);
+    }
+
+    getConnections(caseId) {
+      return this.adjList.get(caseId) || [];
+    }
+  }
+
+  const caseDependencyGraph = new Graph();
+
+  function handleHearingAdd({ title, date, judge, caseId }) {
+    hearingHeap.insert({ title, date: new Date(date) });
+    caseTitleTrie.insert(title);
+
+    addJudgeAvailability(judge, date);
+    caseDependencyGraph.addEdge(caseId, "MainCourt");
+  }
+
+class SegmentTree {
+  constructor(size) {
+    this.size = size;
+    this.tree = new Array(4 * size).fill(0);
+  }
+
+  update(index, value, node = 0, left = 0, right = this.size - 1) {
+    if (left === right) {
+      this.tree[node] += value;
+    } else {
+      const mid = Math.floor((left + right) / 2);
+      if (index <= mid) this.update(index, value, 2 * node + 1, left, mid);
+      else this.update(index, value, 2 * node + 2, mid + 1, right);
+      this.tree[node] = this.tree[2 * node + 1] + this.tree[2 * node + 2];
+    }
+  }
+
+  query(qLeft, qRight, node = 0, left = 0, right = this.size - 1) {
+    if (qRight < left || qLeft > right) return 0;
+    if (qLeft <= left && qRight >= right) return this.tree[node];
+    const mid = Math.floor((left + right) / 2);
+    return this.query(qLeft, qRight, 2 * node + 1, left, mid) +
+           this.query(qLeft, qRight, 2 * node + 2, mid + 1, right);
+  }
+}
+
+const dateIndexMap = new Map(); 
+const hearingDateTree = new SegmentTree(1000); 
+class DSU {
+  constructor() {
+    this.parent = new Map();
+  }
+
+  find(x) {
+    if (!this.parent.has(x)) this.parent.set(x, x);
+    if (this.parent.get(x) !== x) {
+      this.parent.set(x, this.find(this.parent.get(x)));
+    }
+    return this.parent.get(x);
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX !== rootY) {
+      this.parent.set(rootX, rootY);
+    }
+  }
+
+  isConnected(x, y) {
+    return this.find(x) === this.find(y);
+  }
+}
+
+const caseDSU = new DSU();
+const undoStack = [];
+
+function performAction(action) {
+  undoStack.push(action);
+  action.do();
+}
+
+function undoLastAction() {
+  if (undoStack.length > 0) {
+    const action = undoStack.pop();
+    action.undo();
+  }
+}
+const exampleAction = {
+  do: () => console.log("Action done"),
+  undo: () => console.log("Undo action")
+};
+
+
+  
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM Elements
+      const calendarGrid = document.getElementById('calendar-grid');
+      const currentMonthEl = document.getElementById('current-month');
+      const prevMonthBtn = document.getElementById('prev-month');
+      const nextMonthBtn = document.getElementById('next-month');
+      const todayBtn = document.getElementById('today-btn');
+      const printBtn = document.getElementById('print-btn');
+      const addHearingBtn = document.getElementById('add-hearing');
+      const hearingModal = document.getElementById('hearing-modal');
+      const closeModalBtn = document.getElementById('close-modal');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const saveBtn = document.getElementById('save-btn');
+      const deleteBtn = document.getElementById('delete-btn');
+      const caseTitleInput = document.getElementById('case-title');
+      const caseNumberInput = document.getElementById('case-number');
+      const hearingDateInput = document.getElementById('hearing-date');
+      const hearingTimeInput = document.getElementById('hearing-time');
+      const hearingJudgeInput = document.getElementById('hearing-judge');
+      const hearingCourtroomInput = document.getElementById('hearing-courtroom');
+      const hearingNotesInput = document.getElementById('hearing-notes');
+      const hearingStatusInput = document.getElementById('hearing-status');
+      const caseTypeInput = document.getElementById('case-type');
+      const caseTypeOptions = document.querySelectorAll('.case-type-option');
+      const upcomingList = document.getElementById('upcoming-list');
+      const allHearingsList = document.getElementById('all-hearings-list');
+      const totalHearingsEl = document.getElementById('total-hearings');
+      const upcomingHearingsEl = document.getElementById('upcoming-hearings');
+      const completedHearingsEl = document.getElementById('completed-hearings');
+      const rescheduledHearingsEl = document.getElementById('rescheduled-hearings');
+      const searchInput = document.getElementById('search-input');
+      const viewOptions = document.querySelectorAll('.view-option');
+      const calendarView = document.getElementById('calendar-view');
+      const listView = document.getElementById('list-view');
+      const judgesView = document.getElementById('judges-view');
+      const reportsView = document.getElementById('reports-view');
+      const sortDateBtn = document.getElementById('sort-date-btn');
+      const sortJudgeBtn = document.getElementById('sort-judge-btn');
+      const newJudgeInput = document.getElementById('new-judge-input');
+      const addJudgeBtn = document.getElementById('add-judge-btn');
+      const judgeList = document.getElementById('judge-list');
+      const statusOptions = document.querySelectorAll('.status-option');
+      const statusFilter = document.getElementById('status-filter');
+      const menuCalendar = document.getElementById('menu-calendar');
+      const menuList = document.getElementById('menu-list');
+      const menuJudges = document.getElementById('menu-judges');
+      const menuReports = document.getElementById('menu-reports');
+      const menuSettings = document.getElementById('menu-settings');
+      const reportTypeSelect = document.getElementById('report-type');
+      const reportDateContainer = document.getElementById('report-date-container');
+      const reportJudgeContainer = document.getElementById('report-judge-container');
+      const reportDateInput = document.getElementById('report-date');
+      const reportJudgeSelect = document.getElementById('report-judge');
+      const generateReportBtn = document.getElementById('generate-report');
+      const reportPreview = document.getElementById('report-preview');
+      const reportTitle = document.getElementById('report-title');
+      const reportContent = document.getElementById('report-content');
+      
+      // State
+      let currentDate = new Date();
+      let hearings = JSON.parse(localStorage.getItem('hearings')) || [];
+      let judges = JSON.parse(localStorage.getItem('judges')) || ['Judge Doe', 'Judge Smith', 'Judge Johnson'];
+      let selectedHearingId = null;
+      let currentView = 'month';
+      let editingJudge = null;
+      let currentStatusFilter = 'all';
+      
+      // Initialize
+      renderJudges();
+      renderCalendar();
+      renderAllHearings();
+      updateStats();
+      reportDateInput.valueAsDate = new Date();
+      
+      // Event Listeners
+      prevMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+      });
+      
+      nextMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+      });
+      
+      todayBtn.addEventListener('click', function() {
+        currentDate = new Date();
+        renderCalendar();
+      });
+      
+      printBtn.addEventListener('click', function() {
+        window.print();
+      });
+      
+      addHearingBtn.addEventListener('click', function() {
+        selectedHearingId = null;
+        document.getElementById('modal-title').textContent = 'Add New Hearing';
+        document.getElementById('hearing-form').reset();
+        deleteBtn.style.display = 'none';
+        hearingDateInput.valueAsDate = new Date();
+        hearingTimeInput.value = '09:00';
+        hearingStatusInput.value = 'scheduled';
+        caseTypeInput.value = '';
+        toggleModal();
+      });
+      
+      closeModalBtn.addEventListener('click', toggleModal);
+      cancelBtn.addEventListener('click', toggleModal);
+      
+      saveBtn.addEventListener('click', function() {
+        if (!document.getElementById('hearing-form').checkValidity()) {
+          document.getElementById('hearing-form').reportValidity();
+          return;
+        }
+        
+        const hearingData = {
+          id: selectedHearingId || Date.now().toString(),
+          title: caseTitleInput.value,
+          caseNumber: caseNumberInput.value,
+          date: hearingDateInput.value,
+          time: hearingTimeInput.value,
+          type: caseTypeInput.value,
+          judge: hearingJudgeInput.value,
+          courtroom: hearingCourtroomInput.value,
+          notes: hearingNotesInput.value,
+          status: hearingStatusInput.value
+        };
+        
+        if (selectedHearingId) {
+          // Update existing hearing
+          hearings = hearings.map(h => 
+            h.id === selectedHearingId ? hearingData : h
+          );
+        } else {
+          // Add new hearing
+          hearings.push(hearingData);
+        }
+        
+        localStorage.setItem('hearings', JSON.stringify(hearings));
+        renderCalendar();
+        renderAllHearings();
+        updateStats();
+        toggleModal();
+      });
+      
+      deleteBtn.addEventListener('click', function() {
+        if (selectedHearingId && confirm('Are you sure you want to delete this hearing?')) {
+          hearings = hearings.filter(h => h.id !== selectedHearingId);
+          localStorage.setItem('hearings', JSON.stringify(hearings));
+          renderCalendar();
+          renderAllHearings();
+          updateStats();
+          toggleModal();
+        }
+      });
+      
+      caseTypeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          caseTypeOptions.forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+          caseTypeInput.value = this.dataset.type;
+        });
+      });
+      
+      searchInput.addEventListener('input', function() {
+        renderAllHearings();
+      });
+      
+      viewOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          viewOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          
+          if (currentView === 'list') {
+            calendarView.style.display = 'none';
+            listView.style.display = 'block';
+          } else {
+            calendarView.style.display = 'block';
+            listView.style.display = 'none';
+            renderCalendar();
+          }
+        });
+      });
+      
+      statusOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          statusOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          currentStatusFilter = this.dataset.status;
+          renderAllHearings();
+          if (currentView !== 'list') {
+            renderCalendar();
+          }
+        });
+      });
+      
+      menuCalendar.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView('calendar');
+      });
+      
+      menuList.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView('list');
+      });
+      
+      menuJudges.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView('judges');
+      });
+      
+      menuReports.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView('reports');
+      });
+      
+      menuSettings.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Settings feature will be implemented in future versions');
+      });
+      
+      sortDateBtn.addEventListener('click', function() {
+        renderAllHearings('date');
+      });
+      
+      sortJudgeBtn.addEventListener('click', function() {
+        renderAllHearings('judge');
+      });
+      
+      addJudgeBtn.addEventListener('click', function() {
+        const judgeName = newJudgeInput.value.trim();
+        if (judgeName && !judges.includes(judgeName)) {
+          judges.push(judgeName);
+          localStorage.setItem('judges', JSON.stringify(judges));
+          renderJudges();
+          newJudgeInput.value = '';
+        }
+      });
+      
+      reportTypeSelect.addEventListener('change', function() {
+        if (this.value === 'judge') {
+          reportDateContainer.style.display = 'none';
+          reportJudgeContainer.style.display = 'block';
+        } else {
+          reportDateContainer.style.display = 'block';
+          reportJudgeContainer.style.display = 'none';
+        }
+      });
+      
+      generateReportBtn.addEventListener('click', function() {
+        generateReport();
+      });
+      
+      // Functions
+      function showView(viewName) {
+        // Hide all views
+        calendarView.style.display = 'none';
+        listView.style.display = 'none';
+        judgesView.style.display = 'none';
+        reportsView.style.display = 'none';
+        
+        // Show selected view
+        switch(viewName) {
+          case 'calendar':
+            calendarView.style.display = 'block';
+            viewOptions.forEach(opt => opt.classList.remove('active'));
+            document.querySelector('.view-option[data-view="month"]').classList.add('active');
+            currentView = 'month';
+            renderCalendar();
+            break;
+          case 'list':
+            listView.style.display = 'block';
+            viewOptions.forEach(opt => opt.classList.remove('active'));
+            document.querySelector('.view-option[data-view="list"]').classList.add('active');
+            currentView = 'list';
+            renderAllHearings();
+            break;
+          case 'judges':
+            judgesView.style.display = 'block';
+            break;
+          case 'reports':
+            reportsView.style.display = 'block';
+            break;
+        }
+        
+        // Update active menu item
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        document.getElementById(menu-${viewName}).classList.add('active');
+      }
+      
+      function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        currentMonthEl.textContent = new Date(year, month).toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric'
+        });
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay();
+        
+        calendarGrid.innerHTML = '';
+        
+        // Day headers
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        dayNames.forEach(day => {
+          const dayHeader = document.createElement('div');
+          dayHeader.className = 'day-header';
+          dayHeader.textContent = day;
+          calendarGrid.appendChild(dayHeader);
+        });
+        
+        // Previous month days
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = 0; i < startingDay; i++) {
+          const day = prevMonthLastDay - startingDay + i + 1;
+          const date = new Date(year, month - 1, day);
+          addDayToCalendar(day, date, true);
+        }
+        
+        // Current month days
+        const today = new Date();
+        for (let i = 1; i <= daysInMonth; i++) {
+          const date = new Date(year, month, i);
+          const isToday = date.toDateString() === today.toDateString();
+          addDayToCalendar(i, date, false, isToday);
+        }
+        
+        // Next month days
+        const daysToAdd = 42 - (startingDay + daysInMonth);
+        for (let i = 1; i <= daysToAdd; i++) {
+          const date = new Date(year, month + 1, i);
+          addDayToCalendar(i, date, true);
+        }
+      }
+      
+      function addDayToCalendar(day, date, isOtherMonth, isToday = false) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day';
+        if (isOtherMonth) dayEl.classList.add('other-month');
+        if (isToday) dayEl.classList.add('today');
+        
+        const dateStr = formatDate(date);
+        let dayHearings = hearings.filter(h => h.date === dateStr);
+        
+        // Apply status filter
+        if (currentStatusFilter !== 'all') {
+          dayHearings = dayHearings.filter(h => h.status === currentStatusFilter);
+        }
+        
+        if (dayHearings.length > 0) {
+          dayEl.classList.add('has-hearings');
+        }
+        
+        dayEl.innerHTML = <div class="day-number">${day}</div>;
+        
+        // Add hearings for the day
+        dayHearings.forEach(hearing => {
+          const hearingEl = document.createElement('div');
+          hearingEl.className = hearing ${hearing.type} ${hearing.status};
+          hearingEl.innerHTML = `
+            <div class="hearing-title">${hearing.title}</div>
+            <div class="hearing-time">${formatTime(hearing.time)}</div>
+            <div class="hearing-judge">${hearing.judge}</div>
+          `;
+          hearingEl.addEventListener('click', () => openEditModal(hearing));
+          dayEl.appendChild(hearingEl);
+        });
+        
+        dayEl.addEventListener('click', function(e) {
+          if (e.target === dayEl || e.target.classList.contains('day-number')) {
+            selectedHearingId = null;
+            document.getElementById('modal-title').textContent = 'Add New Hearing';
+            document.getElementById('hearing-form').reset();
+            deleteBtn.style.display = 'none';
+            hearingDateInput.value = dateStr;
+            hearingTimeInput.value = '09:00';
+            hearingStatusInput.value = 'scheduled';
+            caseTypeInput.value = '';
+            toggleModal();
+          }
+        });
+        
+        calendarGrid.appendChild(dayEl);
+      }
+      
+      function renderAllHearings(sortBy = 'date') {
+        let filteredHearings = [...hearings];
+        
+        // Filter by status
+        if (currentStatusFilter !== 'all') {
+          filteredHearings = filteredHearings.filter(h => h.status === currentStatusFilter);
+        }
+        
+        // Filter by search
+        const searchTerm = searchInput.value.toLowerCase();
+        if (searchTerm) {
+          filteredHearings = filteredHearings.filter(h => 
+            h.title.toLowerCase().includes(searchTerm) || 
+            h.caseNumber.toLowerCase().includes(searchTerm) ||
+            h.judge.toLowerCase().includes(searchTerm)
+          );
+        }
+        
+        // Sort
+        if (sortBy === 'date') {
+          filteredHearings.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (sortBy === 'judge') {
+          filteredHearings.sort((a, b) => a.judge.localeCompare(b.judge));
+        }
+        
+        // Render
+        allHearingsList.innerHTML = '';
+        
+        if (filteredHearings.length === 0) {
+          allHearingsList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-calendar-times"></i>
+              <h3>No hearings found</h3>
+              <p>Try adjusting your search or add a new hearing</p>
+            </div>
+          `;
+          return;
+        }
+        
+        filteredHearings.forEach(hearing => {
+          const hearingDate = new Date(hearing.date);
+          const hearingEl = document.createElement('div');
+          hearingEl.className = 'hearing-item';
+          hearingEl.innerHTML = `
+            <div class="hearing-date">
+              <div class="hearing-day">${hearingDate.getDate()}</div>
+              <div class="hearing-month">${hearingDate.toLocaleString('default', { month: 'short' })}</div>
+            </div>
+            <div class="hearing-details">
+              <h4>${hearing.title} <span class="badge ${hearing.type} ${hearing.status}">${hearing.status}</span></h4>
+              <div class="hearing-meta">
+                <span><i class="far fa-clock"></i> ${formatTime(hearing.time)}</span>
+                <span><i class="fas fa-user-tie"></i> ${hearing.judge}</span>
+                <span><i class="fas fa-door-open"></i> ${hearing.courtroom}</span>
+                <span><i class="fas fa-hashtag"></i> ${hearing.caseNumber}</span>
+              </div>
+              ${hearing.notes ? <div class="hearing-notes" style="margin-top: 8px; font-size: 13px; color: #555;"><i class="fas fa-sticky-note"></i> ${hearing.notes}</div> : ''}
+            </div>
+            <div class="hearing-actions">
+              <button class="action-btn edit-btn" data-id="${hearing.id}"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn" data-id="${hearing.id}"><i class="fas fa-trash"></i></button>
+              ${hearing.status !== 'completed' ? <button class="action-btn complete-btn" data-id="${hearing.id}"><i class="fas fa-check"></i></button> : ''}
+            </div>
+          `;
+          
+          allHearingsList.appendChild(hearingEl);
+        });
+        
+        // Add event listeners to action buttons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const hearingId = this.dataset.id;
+            const hearing = hearings.find(h => h.id === hearingId);
+            if (hearing) openEditModal(hearing);
+          });
+        });
+        
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const hearingId = this.dataset.id;
+            if (confirm('Are you sure you want to delete this hearing?')) {
+              hearings = hearings.filter(h => h.id !== hearingId);
+              localStorage.setItem('hearings', JSON.stringify(hearings));
+              renderAllHearings();
+              renderCalendar();
+              updateStats();
+            }
+          });
+        });
+        
+        document.querySelectorAll('.complete-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const hearingId = this.dataset.id;
+            hearings = hearings.map(h => {
+              if (h.id === hearingId) {
+                return { ...h, status: 'completed' };
+              }
+              return h;
+            });
+            localStorage.setItem('hearings', JSON.stringify(hearings));
+            renderAllHearings();
+            renderCalendar();
+            updateStats();
+          });
+        });
+      }
+      
+      function renderJudges() {
+        judgeList.innerHTML = '';
+        judges.forEach(judge => {
+          const judgeEl = document.createElement('div');
+          judgeEl.className = 'judge-item';
+          
+          if (editingJudge === judge) {
+            judgeEl.innerHTML = `
+              <input type="text" class="edit-judge-input" value="${judge}" id="edit-judge-input">
+              <div class="judge-actions">
+                <button class="action-btn save-judge-btn" data-judge="${judge}"><i class="fas fa-save"></i></button>
+                <button class="action-btn cancel-edit-btn" data-judge="${judge}"><i class="fas fa-times"></i></button>
+              </div>
+            `;
+          } else {
+            judgeEl.innerHTML = `
+              <span>${judge}</span>
+              <div class="judge-actions">
+                <button class="action-btn edit-judge-btn" data-judge="${judge}"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete-judge-btn" data-judge="${judge}"><i class="fas fa-trash"></i></button>
+              </div>
+            `;
+          }
+          
+          judgeList.appendChild(judgeEl);
+        });
+        
+        // Populate judge dropdown in modal
+        hearingJudgeInput.innerHTML = '<option value="">Select judge</option>';
+        judges.forEach(judge => {
+          const option = document.createElement('option');
+          option.value = judge;
+          option.textContent = judge;
+          hearingJudgeInput.appendChild(option);
+        });
+        
+        // Populate judge dropdown in reports
+        reportJudgeSelect.innerHTML = '<option value="">All Judges</option>';
+        judges.forEach(judge => {
+          const option = document.createElement('option');
+          option.value = judge;
+          option.textContent = judge;
+          reportJudgeSelect.appendChild(option);
+        });
+        
+        // Add event listeners to judge buttons
+        document.querySelectorAll('.edit-judge-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            editingJudge = this.dataset.judge;
+            renderJudges();
+            document.getElementById('edit-judge-input').focus();
+          });
+        });
+        
+        document.querySelectorAll('.delete-judge-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const judgeName = this.dataset.judge;
+            if (confirm(Are you sure you want to remove ${judgeName}?)) {
+              judges = judges.filter(j => j !== judgeName);
+              localStorage.setItem('judges', JSON.stringify(judges));
+              renderJudges();
+              
+              // Update hearings that had this judge
+              hearings = hearings.map(h => {
+                if (h.judge === judgeName) {
+                  return { ...h, judge: '' };
+                }
+                return h;
+              });
+              localStorage.setItem('hearings', JSON.stringify(hearings));
+              renderCalendar();
+              renderAllHearings();
+            }
+          });
+        });
+        
+        document.querySelectorAll('.save-judge-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const oldName = this.dataset.judge;
+            const newName = document.getElementById('edit-judge-input').value.trim();
+            
+            if (newName && newName !== oldName) {
+              if (judges.includes(newName)) {
+                alert('A judge with this name already exists');
+                return;
+              }
+              
+              // Update judge name in judges array
+              const index = judges.indexOf(oldName);
+              if (index !== -1) {
+                judges[index] = newName;
+                localStorage.setItem('judges', JSON.stringify(judges));
+                
+                // Update judge name in all hearings
+                hearings = hearings.map(h => {
+                  if (h.judge === oldName) {
+                    return { ...h, judge: newName };
+                  }
+                  return h;
+                });
+                localStorage.setItem('hearings', JSON.stringify(hearings));
+              }
+            }
+            
+            editingJudge = null;
+            renderJudges();
+            renderCalendar();
+            renderAllHearings();
+          });
+        });
+        
+        document.querySelectorAll('.cancel-edit-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            editingJudge = null;
+            renderJudges();
+          });
+        });
+      }
+      
+      function generateReport() {
+        const reportType = reportTypeSelect.value;
+        const date = reportDateInput.value;
+        const judge = reportJudgeSelect.value;
+        
+        let reportHearings = [...hearings];
+        let title = '';
+        
+        switch(reportType) {
+          case 'daily':
+            reportHearings = reportHearings.filter(h => h.date === date);
+            const reportDate = new Date(date);
+            title = Daily Schedule for ${reportDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })};
+            break;
+          case 'weekly':
+            const startDate = new Date(date);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+            
+            reportHearings = reportHearings.filter(h => {
+              const hearingDate = new Date(h.date);
+              return hearingDate >= startDate && hearingDate <= endDate;
+            });
+            
+            title = Weekly Schedule from ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()};
+            break;
+          case 'monthly':
+            const monthDate = new Date(date);
+            const month = monthDate.getMonth();
+            const year = monthDate.getFullYear();
+            
+            reportHearings = reportHearings.filter(h => {
+              const hearingDate = new Date(h.date);
+              return hearingDate.getMonth() === month && hearingDate.getFullYear() === year;
+            });
+            
+            title = Monthly Schedule for ${monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })};
+            break;
+          case 'judge':
+            if (judge) {
+              reportHearings = reportHearings.filter(h => h.judge === judge);
+              title = Schedule for ${judge};
+            } else {
+              title = 'Schedule by Judge';
+              reportHearings.sort((a, b) => a.judge.localeCompare(b.judge));
+            }
+            break;
+        }
+        
+        // Generate report content
+        let content = '';
+        
+        if (reportHearings.length === 0) {
+          content = '<p>No hearings found for the selected criteria.</p>';
+        } else {
+          if (reportType === 'judge' && !judge) {
+            // Group by judge
+            const judgeGroups = {};
+            reportHearings.forEach(h => {
+              if (!judgeGroups[h.judge]) {
+                judgeGroups[h.judge] = [];
+              }
+              judgeGroups[h.judge].push(h);
+            });
+            
+            for (const [judgeName, judgeHearings] of Object.entries(judgeGroups)) {
+              content += <h4>${judgeName || 'Unassigned'}</h4>;
+              content += generateHearingTable(judgeHearings);
+            }
+          } else {
+            content = generateHearingTable(reportHearings);
+          }
+        }
+        
+        reportTitle.textContent = title;
+        reportContent.innerHTML = content;
+        reportPreview.style.display = 'block';
+      }
+      
+      function generateHearingTable(hearings) {
+        let table = `
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr style="background-color: #f8f9fa;">
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Time</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Case</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Type</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Courtroom</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        hearings.forEach(h => {
+          const hearingDate = new Date(h.date);
+          table += `
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd;">${hearingDate.toLocaleDateString()}</td>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatTime(h.time)}</td>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                <strong>${h.title}</strong><br>
+                ${h.caseNumber}
+              </td>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd; text-transform: capitalize;">${h.type}</td>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd;">${h.courtroom}</td>
+              <td style="padding: 10px; border-bottom: 1px solid #ddd; text-transform: capitalize;">${h.status}</td>
+            </tr>
+          `;
+        });
+        
+        table += `
+            </tbody>
+          </table>
+          <p>Total hearings: ${hearings.length}</p>
+        `;
+        
+        return table;
+      }
+      
+      function openEditModal(hearing) {
+        selectedHearingId = hearing.id;
+        document.getElementById('modal-title').textContent = 'Edit Hearing';
+        caseTitleInput.value = hearing.title;
+        caseNumberInput.value = hearing.caseNumber;
+        hearingDateInput.value = hearing.date;
+        hearingTimeInput.value = hearing.time;
+        hearingJudgeInput.value = hearing.judge;
+        hearingCourtroomInput.value = hearing.courtroom;
+        hearingNotesInput.value = hearing.notes || '';
+        hearingStatusInput.value = hearing.status;
+        
+        // Set case type
+        caseTypeOptions.forEach(opt => opt.classList.remove('selected'));
+        const selectedOption = document.querySelector(.case-type-option[data-type="${hearing.type}"]);
+        if (selectedOption) selectedOption.classList.add('selected');
+        caseTypeInput.value = hearing.type;
+        
+        deleteBtn.style.display = 'block';
+        toggleModal();
+      }
+      
+      function toggleModal() {
+        hearingModal.classList.toggle('active');
+      }
+      
+      function updateStats() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        totalHearingsEl.textContent = hearings.length;
+        
+        upcomingHearingsEl.textContent = hearings.filter(h => {
+          const hearingDate = new Date(h.date);
+          return hearingDate >= today && h.status === 'scheduled';
+        }).length;
+        
+        completedHearingsEl.textContent = hearings.filter(h => h.status === 'completed').length;
+        rescheduledHearingsEl.textContent = hearings.filter(h => h.status === 'rescheduled').length;
+      }
+      
+      function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return ${year}-${month}-${day};
+      }
+      
+      function formatTime(time) {
+        if (!time) return '';
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return ${displayHour}:${minutes} ${ampm};
+      }
+      
+      // Sample data for demo
+      if (hearings.length === 0) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        hearings = [
+          {
+            id: '1',
+            title: 'State vs. Smith',
+            caseNumber: 'CR-2024-00123',
+            date: formatDate(today),
+            time: '09:30',
+            type: 'criminal',
+            judge: 'Judge Doe',
+            courtroom: 'Courtroom 1',
+            notes: 'Bail hearing',
+            status: 'scheduled'
+          },
+          {
+            id: '2',
+            title: 'Johnson vs. Acme Corp',
+            caseNumber: 'CV-2024-00456',
+            date: formatDate(tomorrow),
+            time: '14:00',
+            type: 'civil',
+            judge: 'Judge Smith',
+            courtroom: 'Courtroom 3',
+            notes: 'Motion to dismiss',
+            status: 'scheduled'
+          },
+          {
+            id: '3',
+            title: 'In re: Peterson Adoption',
+            caseNumber: 'FA-2024-00789',
+            date: formatDate(nextWeek),
+            time: '10:30',
+            type: 'family',
+            judge: 'Judge Johnson',
+            courtroom: 'Courtroom 2',
+            notes: 'Final hearing',
+            status: 'scheduled'
+          },
+          {
+            id: '4',
+            title: 'City vs. Thompson',
+            caseNumber: 'CR-2024-00234',
+            date: formatDate(yesterday),
+            time: '13:45',
+            type: 'criminal',
+            judge: 'Judge Doe',
+            courtroom: 'Courtroom 1',
+            notes: 'Sentencing hearing',
+            status: 'completed'
+          },
+          {
+            id: '5',
+            title: 'Williams vs. Davis',
+            caseNumber: 'CV-2024-00567',
+            date: formatDate(today),
+            time: '11:15',
+            type: 'civil',
+            judge: 'Judge Smith',
+            courtroom: 'Courtroom 3',
+            notes: 'Preliminary hearing - rescheduled from last week',
+            status: 'rescheduled'
+          }
+        ];
+        
+        localStorage.setItem('hearings', JSON.stringify(hearings));
+        renderCalendar();
+        renderAllHearings();
+        updateStats();
+      }
+    });
+  </script>
+ 
+
+
+</body>
+</html>
